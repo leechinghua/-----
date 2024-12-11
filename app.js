@@ -91,6 +91,12 @@ function changeDirection(event) {
   // 防止蛇在邏輯上自殺
   window.removeEventListener("keydown", changeDirection);
 }
+// 顯示遊戲分數
+let highestScore;
+loadHighestScore();
+let score = 0;
+document.getElementById("myScore").innerHTML = "遊戲分數：" + score;
+document.getElementById("myScore2").innerHTML = "最高分數：" + highestScore;
 
 function draw() {
   // 畫圖前確認蛇有沒有咬到自己
@@ -153,6 +159,10 @@ function draw() {
     // 重新選定一個新的果實位置
     myFruit.pickALocation();
     // 更新分數
+    score++;
+    setHighestScore(score);
+    document.getElementById("myScore").innerHTML = "遊戲分數：" + score;
+    document.getElementById("myScore2").innerHTML = "最高分數：" + highestScore;
   } else {
     snake.pop();
   }
@@ -161,4 +171,19 @@ function draw() {
   window.addEventListener("keydown", changeDirection);
 }
 
-let myGame = setInterval(draw, 200);
+let myGame = setInterval(draw, 100);
+// 最高分數
+function loadHighestScore() {
+  if (localStorage.getItem("highestScore") == null) {
+    highestScore = 0;
+  } else {
+    highestScore = Number(localStorage.getItem("highestScore"));
+  }
+}
+
+function setHighestScore() {
+  if (score > highestScore) {
+    localStorage.setItem("highestScore", score);
+    highestScore = score;
+  }
+}
