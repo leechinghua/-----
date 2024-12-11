@@ -6,22 +6,26 @@ const row = canvas.height / unit; //16
 const column = canvas.width / unit;
 
 let snake = [];
-snake[0] = {
-  x: 80,
-  y: 0,
-};
-snake[1] = {
-  x: 60,
-  y: 0,
-};
-snake[2] = {
-  x: 40,
-  y: 0,
-};
-snake[3] = {
-  x: 20,
-  y: 0,
-};
+// 蛇的原始型態
+function createSnake() {
+  snake[0] = {
+    x: 80,
+    y: 0,
+  };
+  snake[1] = {
+    x: 60,
+    y: 0,
+  };
+  snake[2] = {
+    x: 40,
+    y: 0,
+  };
+  snake[3] = {
+    x: 20,
+    y: 0,
+  };
+}
+
 // 果實設定
 class Fruit {
   constructor() {
@@ -60,6 +64,8 @@ class Fruit {
     this.y = new_y;
   }
 }
+// 初始設定
+createSnake();
 let myFruit = new Fruit();
 // 設定方向鍵
 window.addEventListener("keydown", changeDirection);
@@ -79,9 +85,22 @@ function changeDirection(event) {
     d = "Up";
     // console.log("上");
   }
+  // draw d = "Left", d="Up", d= "Right"如果手速夠快就能180度轉
+  // 每次按方向鍵之後在下一幀被畫出來前
+  // 不接受任何方向鍵(keydown事件)
+  // 防止蛇在邏輯上自殺
+  window.removeEventListener("keydown", changeDirection);
 }
 
 function draw() {
+  // 畫圖前確認蛇有沒有咬到自己
+  for (let i = 1; i < snake.length; i++) {
+    if (snake[i].x == snake[0].x && snake[i].y == snake[0].y) {
+      clearInterval(myGame);
+      alert("遊戲結束！");
+      return;
+    }
+  }
   // 背景設定為黑色
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -139,6 +158,7 @@ function draw() {
   }
   // snake.pop();
   snake.unshift(newHead);
+  window.addEventListener("keydown", changeDirection);
 }
 
 let myGame = setInterval(draw, 200);
